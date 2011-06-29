@@ -1,0 +1,16 @@
+---
+name : detroit-github
+title: Detroit GitHub
+
+contact: trans <transfire@gmail.com>
+
+description:
+  GitHub plugin for Detroit build system.
+
+resources:
+  home: http://detroit.github.com/
+  code: http://github.com/detroit/detroit-github
+
+copyright:
+  (c) 2011 Thomas Sawyer
+

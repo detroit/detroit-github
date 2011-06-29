@@ -1,0 +1,25 @@
+= Detroit GitHub Tool
+
+
+== DESCRIPTION
+
+The GitHub tool provides services tied to your project's
+github repository.
+
+Currently it only supports gh-pages publishing from a
+project's website directory.
+
+
+== INSTALL
+
+  $ gem install detroit-github
+
+
+== COPYRIGHT
+
+Copyright (c) 2011 Thomas Sawyer
+
+GPL v.3 license
+
+See COPYING.rdoc and GPL3.txt file for details.
+
