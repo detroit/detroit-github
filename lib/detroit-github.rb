@@ -22,6 +22,9 @@ module Detroit
     #
     DEFAULT_MESSAGE ="Update by Detroit. [admin]"
 
+
+    #  A T T R I B U T E S
+
     # The remote to use (defaults to 'origin').
     attr_accessor :remote
 
@@ -59,6 +62,22 @@ module Detroit
     # The repository branch (ALWAYS "gh-pages").
     attr_reader :branch
 
+
+    #  A S S E M B L Y   S T A T I O N S
+
+    #
+    def station_publish
+      publish
+    end
+
+    #
+    def station_clean
+      clean
+    end
+
+
+    #  S E R V I C E   M E T H O D S 
+
     # Publish sitemap files to branch (gh-pages).
     def publish
       if expanded_sitemap.empty?
@@ -68,7 +87,7 @@ module Detroit
 
       url = repo.config["remote.#{remote}.url"]
       dir = Dir.pwd  # project.root
-      new = !repo.branches.include?(branch)
+      new = !repo.branches.find{ |b| b.name == branch }
 
       create_branch if new
 
@@ -109,6 +128,33 @@ module Detroit
 
   private
 
+    # If the gh-pages branch doesn't exist we will need to create it.
+    #--
+    # TODO: This assumes we started out on master. Look up current and swtich back to that.
+    #++
+    def create_branch
+      size = repo.status.changed.size +
+             repo.status.added.size   +
+             repo.status.deleted.size
+      if size > 0
+        abort "Cannot create gh-pages branch in dirty repo."
+      end
+      ## save any outstadning changes
+      sh 'git stash save'
+      ## yes, only a (git) fanboy could possibly think this  
+      ## is a good way to handle websites
+      sh 'git symbolic-ref HEAD refs/heads/gh-pages'
+      sh 'rm .git/index'
+      sh 'git clean -fdxq'
+      sh 'echo "My GitHub Page" > index.html'
+      sh 'git add .'
+      sh 'git commit -a -m "First pages commit"'
+      sh 'git push origin gh-pages'
+      ## gh-pages is made, let's get back to master
+      sh 'git checkout master'
+      sh 'git stash pop'
+    end
+
     #--
     # TODO: Does the POM Project provide the site directory?
     #++
@@ -121,13 +167,15 @@ module Detroit
     end
 
     # Require Grit.
+    #
+    # TODO: Switch to `scm` gem if it is better than grit.
     def initialize_requires
       require 'grit'
     end
 
     # Get a cached Grit::Repo instance.
     def repo
-      @repo ||= Grit::Repo.new(project.root)
+      @repo ||= Grit::Repo.new(project ? project.root : Dir.pwd)
     end
 
     # Cached system temporary directory.
@@ -137,18 +185,6 @@ module Detroit
         mkdir_p(tmpdir)
         tmpdir
       )
-    end
-
-    # If the gh-pages branch doesn't exist we will need to create it.
-    def create_branch
-      #$ git stash save
-
-      #$ git symbolic-ref HEAD refs/heads/gh-pages
-      #$ rm .git/index
-      #$ git clean -fdx
-
-      #$ git checkout master
-      #$ git stash pop
     end
 
     # Default sitemap includes the `site` directoy, if it exists.
