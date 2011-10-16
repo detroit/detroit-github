@@ -1,6 +1,6 @@
 module Detroit
 
-  #
+  # Convenience method for creating a GitHub tool instance.
   def GitHub(options={})
     GitHub.new(options)
   end
@@ -13,11 +13,17 @@ module Detroit
   # IMPORTNAT: This tool is useless unless your project is hosted on GitHub!
   class GitHub < Tool
 
+    #
+    PAGES_BRANCH = "gh-pages"
+
+    #
+    DEFAULT_REMOTE = "origin"
+
+    #
+    DEFAULT_MESSAGE ="Update by Detroit. [admin]"
+
     # The remote to use (defaults to 'origin').
     attr_accessor :remote
-
-    # The repository branch (defaults to "gh-pages").
-    attr_accessor :branch
 
     # Commit message.
     attr_accessor :message
@@ -30,27 +36,30 @@ module Detroit
     # List of any files/directory to not overwrite in branch.
     attr_reader :keep
 
-    #
+    # Set sitemap.
     def sitemap=(entries)
       case entries
-      when Array
-        @sitemap = entries
-      else
+      when String
         @sitemap = [entries.to_str]
+      else
+        @sitemap = entries
       end
     end
 
-    #
+    # Set keep list.
     def keep=(entries)
       case entries
-      when Array
-        @keep = entries
-      else
+      when String
         @keep = [entries.to_str]
+      else
+        @keep = entries
       end
     end
 
-    #
+    # The repository branch (ALWAYS "gh-pages").
+    attr_reader :branch
+
+    # Publish sitemap files to branch (gh-pages).
     def publish
       if expanded_sitemap.empty?
         report "No files selected for publishing."
@@ -59,6 +68,9 @@ module Detroit
 
       url = repo.config["remote.#{remote}.url"]
       dir = Dir.pwd  # project.root
+      new = !repo.branches.include?(branch)
+
+      create_branch if new
 
       chdir(tmpdir) do
         sh %[git clone --local #{dir} .]
@@ -84,38 +96,59 @@ module Detroit
 
       chdir(tmpdir) do
         sh %[git add --all]
-        sh %[git commit -a -m "#{message}"]
-        sh %[git push -q #{url} #{branch}]  # TODO: add --dry-run if trial?
+        sh %[git commit -q -a -m "#{message}"]
+        sh %[git push #{remote} #{branch}]  # TODO: add --dry-run if trial?
+        sh %[git push #{url} #{branch}]     # TODO: add --dry-run if trial?
       end
+    end
+
+    #
+    def clean
+      rm_r File.join(Dir.tmpdir, 'detroit', 'github')
     end
 
   private
 
+    #--
     # TODO: Does the POM Project provide the site directory?
+    #++
     def initialize_defaults
-      @branch   ||= 'gh-pages'
-      @remote   ||= 'origin'
-      @message  ||= 'Update website via Detroit.'
+      @branch   ||= PAGES_BRANCH
+      @remote   ||= DEFAULT_REMOTE
+      @message  ||= DEFAULT_MESSAGE
       @sitemap  ||= default_sitemap
       @keep     ||= []
     end
 
-    #
+    # Require Grit.
     def initialize_requires
       require 'grit'
     end
 
-    #
+    # Get a cached Grit::Repo instance.
     def repo
       @repo ||= Grit::Repo.new(project.root)
     end
 
-    #
+    # Cached system temporary directory.
     def tmpdir
       @tmpdir ||= (
         tmpdir = File.join(Dir.tmpdir, 'detroit', 'github', Time.now.to_i.to_s)
         mkdir_p(tmpdir)
+        tmpdir
       )
+    end
+
+    # If the gh-pages branch doesn't exist we will need to create it.
+    def create_branch
+      #$ git stash save
+
+      #$ git symbolic-ref HEAD refs/heads/gh-pages
+      #$ rm .git/index
+      #$ git clean -fdx
+
+      #$ git checkout master
+      #$ git stash pop
     end
 
     # Default sitemap includes the `site` directoy, if it exists.

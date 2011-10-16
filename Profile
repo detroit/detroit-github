@@ -1,8 +1,8 @@
 ---
-name : detroit-github
-title: Detroit GitHub
-
-contact: trans <transfire@gmail.com>
+name    : detroit-github
+version : 0.1.0
+title   : Detroit GitHub
+summary : GitHub plugin for Detroit
 
 description:
   GitHub plugin for Detroit build system.
@@ -10,7 +10,15 @@ description:
 resources:
   home: http://detroit.github.com/
   code: http://github.com/detroit/detroit-github
+  mail: http://groups.google.com/group/rubyworks-mailinglist
 
-copyright:
-  (c) 2011 Thomas Sawyer
+requirements:
+  - detroit
 
+authors:
+  - T. Sawyer <transfire@gmail.com>
+
+copyrights:
+  - (c) 2011 Thomas Sawyer (GPL3)
+
+source: Profile
