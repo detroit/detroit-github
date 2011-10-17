@@ -18,7 +18,7 @@ for defining a github service.
 
   * `sitemap` - List of directories and files to transfer.
     If a single directory entry is given then the contents
-    of that directory will be transferred. Defaults to `site`,
+    of that directory will be transfered. Defaults to `site`,
     `website` or `doc`.
 
   * `keep` - List of any files/directory to not overwrite in branch.
