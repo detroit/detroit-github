@@ -233,6 +233,12 @@ module Detroit
       paths
     end
 
+  public
+
+    def self.man_page
+      File.dirname(__FILE__)+'/../man/detroit-github.5'
+    end
+
   end
 
 end

@@ -1,0 +1,82 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "DETROIT\-GITHUB" "5" "October 2011" "" ""
+.
+.SH "NAME"
+\fBdetroit\-github\fR \- github services for detroit
+.
+.SH "DESCRIPTION"
+The GitHub tool provides services tied to your project\'s github repository\. Presently it only supports gh\-pages publishing\.
+.
+.SH "OPTIONS"
+The following options can be used in Detroit assembly files for defining a github service\.
+.
+.IP "\(bu" 4
+\fBremote\fR \- The remote to use (defaults to \'origin\')\.
+.
+.IP "\(bu" 4
+\fBmessage\fR \- Commit message\.
+.
+.IP "\(bu" 4
+\fBsitemap\fR \- List of directories and files to transfer\. If a single directory entry is given then the contents of that directory will be transfered\. Defaults to \fBsite\fR, \fBwebsite\fR or \fBdoc\fR\.
+.
+.IP "\(bu" 4
+\fBkeep\fR \- List of any files/directory to not overwrite in branch\.
+.
+.IP "" 0
+.
+.SH "EXAMPLES"
+If you keep your website in a project subdirectory called either \fBsite\fR, \fBweb\fR, \fBwebsite\fR or \fBwww\fR, and failing those, \fBdoc\fR or \fBdocs\fR, then the defaults settings are likely sufficiant\.
+.
+.IP "" 4
+.
+.nf
+
+github:
+  active: true
+.
+.fi
+.
+.IP "" 0
+.
+.P
+If the files to copy to the gh\-pages branch are more entailed, use a mapping of source to destination\. For example, if we want to copy all the files in \fBsite/\fR to gh\-pages, but also all the files in \fBdoc/\fR to a directory called \fBdoc\fR we could use:
+.
+.IP "" 4
+.
+.nf
+
+github:
+  sitemap:
+    site: \.
+    doc: doc
+.
+.fi
+.
+.IP "" 0
+.
+.P
+However, this isn\'t usually necessary, since a soft link could be used instead\.
+.
+.IP "" 4
+.
+.nf
+
+$ ln \-s doc site/doc
+.
+.fi
+.
+.IP "" 0
+.
+.P
+You can check soft\-links into with git and they will be transfered as if the real file when copied to the gh\-pages file\. So a more complex \fBsitemap\fR is really only needed when more specific selections or complex globs are needed\.
+.
+.SH "COPYRIGHT"
+Copyright (c) 2010 Thomas Sawyer, Rubyworks
+.
+.P
+Detroit GitHub is distributable in accordance with the GPLv3 license\.
+.
+.SH "SEE ALSO"
+dnote(1), git(1)
