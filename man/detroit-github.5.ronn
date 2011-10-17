@@ -53,6 +53,15 @@ if the real file when copied to the gh-pages file. So a more complex
 complex globs are needed.
 
 
+## RESOURCES
+
+For more information:
+
+  * [API Documentation](http://rubydoc.info/gems/detroit-github)
+
+  * [Development Site](http://github.com/detroit/detroit-github)
+
+
 ## COPYRIGHT
 
 Copyright (c) 2010 Thomas Sawyer, Rubyworks
@@ -62,4 +71,4 @@ Detroit GitHub is distributable in accordance with the GPLv3 license.
 
 ## SEE ALSO
 
-dnote(1), git(1)
+detroit(1), git(1), detroit-grancher(5)
