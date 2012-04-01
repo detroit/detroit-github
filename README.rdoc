@@ -1,7 +1,11 @@
 = Detroit GitHub Tool
 
+{Website}[http://rubyworks.github.com/detroit-github] /
+{Report Issue}[http://github.com/rubyworks/detroit-github/issues] /
+{Repository}[http://github.com/rubyworks/detroit-github]
 
-== DESCRIPTION
+
+== Description
 
 The GitHub tool provides services tied to your project's
 github repository.
@@ -10,16 +14,19 @@ Currently it only supports gh-pages publishing from a
 project's website directory.
 
 
-== INSTALL
+== Installation
+
+Per the usual gem install process:
 
   $ gem install detroit-github
 
 
-== COPYRIGHT
+== Copyrights
 
 Copyright (c) 2011 Thomas Sawyer
 
-GPL v.3 license
+Detroit GitHub is distributable in accordance with the GPL, GNU General Public
+License, version 3 or higher.
 
-See COPYING.rdoc and GPL3.txt file for details.
+See COPYING.rdoc and LICENSE.txt file for details.
 
