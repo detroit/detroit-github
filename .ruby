@@ -26,7 +26,7 @@ load_path:
 revision: 0
 summary: GitHub plugin for Detroit
 title: Detroit GitHub
-version: 0.1.0
+version: 0.2.0
 name: detroit-github
 description: GitHub plugin for Detroit build system.
 organization: rubyworks
