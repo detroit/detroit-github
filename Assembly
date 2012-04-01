@@ -27,7 +27,7 @@ locat:
 
 github:
   active: true
-  gh-pages: web
+  gh_pages: web
 
 announce:
   service: email
