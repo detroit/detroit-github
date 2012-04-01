@@ -1,6 +1,9 @@
 #!mast .ruby bin lib man qed test [A-Z]*.*
 .ruby
 lib/detroit-github.rb
+man/detroit-github.5
+man/detroit-github.5.html
+man/detroit-github.5.ronn
+LICENSE.txt
 README.rdoc
-GPL3.txt
 COPYING.rdoc

@@ -1,6 +1,5 @@
 ---
 source:
-- Profile
 - meta
 authors:
 - name: T. Sawyer
@@ -24,10 +23,12 @@ extra: {}
 load_path:
 - lib
 revision: 0
+created: '2011-10-16'
 summary: GitHub plugin for Detroit
 title: Detroit GitHub
 version: 0.2.0
 name: detroit-github
+suite: detroit
 description: GitHub plugin for Detroit build system.
 organization: rubyworks
 date: '2012-04-01'
