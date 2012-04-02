@@ -18,14 +18,14 @@ module Detroit
     #
     PAGES_BRANCH = "gh-pages"
 
-    #
-    DEFAULT_FOLDER = "pages"
+    # The project directory to store the gh-pages git repo.
+    DEFAULT_FOLDER = "web"
 
     #
     DEFAULT_REMOTE = "origin"
 
-    #
-    DEFAULT_MESSAGE ="Update by Detroit. [admin]"
+    # Default commit message.
+    DEFAULT_MESSAGE = "Update pages via Detroit."
 
 
     #  A T T R I B U T E S
@@ -39,15 +39,15 @@ module Detroit
     # Pages folder to use (defaults to 'pages').
     attr_accessor :folder
 
-    #
+    # Alias for `#folder`.
     alias_accessor :gh_pages, :folder
 
     # Use a local check out?
     #attr_accessor :local
 
-    # List of directories and files to transfer.
+    # List of directories and files to copy to pages.
     # If a single directory entry is given then the contents
-    # of that directory will be transfered.
+    # of that directory will be copied.
     #attr_reader :sitemap
 
     # List of any files/directory to not overwrite in branch.
@@ -119,40 +119,24 @@ module Detroit
       update_gitignore
     end
 
+    #
     # Publish sitemap files to branch (gh-pages).
+    #
+    # @todo Should we all `git add --all` ?
+    #
     def publish
       if !File.directory?(pgdir)
         report "No pages folder found (#{folder})."
         return
       end
 
+      #copy_files  # post_generate assembly ?
+
       chdir(pgdir) do
+        #sh %[git add -A]
+        sh %[git commit -q -a -m "#{message}"]
         sh %[git push #{remote} #{branch}]
       end
-
-      #paths_to_remove.each do |path|
-      #  path = File.join(tmpdir, path)
-      #  rm path if File.file?(path)
-      #end
-
-      #expanded_sitemap.each do |(src, dest)|
-      #  trace "transfer: #{src} => #{dest}"
-      #  if directory?(src)
-      #    out = File.join(tmpdir, dest)
-      #    mkdir_p(out) unless File.directory?(out)
-      #  else
-      #    out = File.join(tmpdir, dest)
-      #    mkdir_p(File.dirname(out))
-      #    install(src, out) unless keep.include?(dest)
-      #  end
-      #end
-
-      #chdir(tmpdir) do
-      #  sh %[git add --all]
-      #  sh %[git commit -q -a -m "#{message}"]
-      #  sh %[git push #{remote} #{branch}]  # TODO: add --dry-run if trial?
-      #  sh %[git push #{url} #{branch}]     # TODO: add --dry-run if trial?
-      #end
     end
 
     #
@@ -162,12 +146,13 @@ module Detroit
 
   private
 
-    # Clone the repo to a local folder, checkout the pages
-    # branch and remove the master branch.
-    #
     # NOTE: Considered using `sh %[git clone --local . #{pgdir}]` but
     # that appeared to require duplicate commits, once in pgdir and
     # then in root.
+
+    # Clone the repo to a local folder, checkout the pages
+    # branch and remove the master branch.
+    #
     def clone_branch
       sh %[git clone #{url} #{pgdir}]
       Dir.chdir(pgdir) do
@@ -218,9 +203,9 @@ module Detroit
       @message  ||= DEFAULT_MESSAGE
     end
 
-    # Require Grit.
-    #
     # TODO: Switch to `scm` gem if it is better than grit.
+
+    # Require Grit.
     def initialize_requires
       require 'grit'
     end
@@ -264,7 +249,30 @@ module Detroit
       project ? project.root : Dir.pwd
     end
 
+    # TODO: Add support to copy files from project root to gh-pages folder.
+    #       This can be helpful when serving generated content.
+
 =begin
+    # Copy files from project root to gh-pages folder.
+    def copy_files
+      paths_to_remove.each do |path|
+        path = File.join(tmpdir, path)
+        rm path if File.file?(path)
+      end
+
+      expanded_sitemap.each do |(src, dest)|
+        trace "transfer: #{src} => #{dest}"
+        if directory?(src)
+          out = File.join(tmpdir, dest)
+          mkdir_p(out) unless File.directory?(out)
+        else
+          out = File.join(tmpdir, dest)
+          mkdir_p(File.dirname(out))
+          install(src, out) unless keep.include?(dest)
+        end
+      end 
+    end
+
     # Default sitemap includes the `site` directoy, if it exists.
     # Otherwise the `doc` directory.
     def default_sitemap
