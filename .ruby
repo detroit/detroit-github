@@ -10,6 +10,7 @@ copyrights:
   license: GPL3
 requirements:
 - name: detroit
+  version: 0.3.0+
 - name: grit
 dependencies: []
 alternatives: []
