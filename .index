@@ -9,9 +9,10 @@ authors:
 organizations:
 - name: Rubyworks
 requirements:
-- version: 0.3.0+
+- version: 0.4.0+
   name: detroit
-- name: grit
+- name: detroit-standard
+- name: gitlab-grit
 conflicts: []
 alternatives: []
 resources:
@@ -40,5 +41,5 @@ summary: GitHub plugin for Detroit
 created: '2011-10-16'
 description: GitHub plugin for Detroit build system.
 suite: detroit
-version: 0.4.0
+version: 0.4.1
 date: '2014-01-14'
