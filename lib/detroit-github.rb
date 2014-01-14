@@ -1,19 +1,33 @@
-require 'detroit/tool'
+require 'detroit-standard'
 
 module Detroit
 
-  # Convenience method for creating a GitHub tool instance.
-  def GitHub(options={})
-    GitHub.new(options)
-  end
+  # FIXME: Sitemap feature is out-of-order!
 
+  ##
   # GitHub tool provides services for working with your
   # project's github repository.
   #
   # Currently it only supports gh-pages publishing.
   #
-  # IMPORTNAT: This tool is useless unless your project is hosted on GitHub!
+  # The following stations of the standard toolchain are targeted:
+  #
+  # * prepare
+  # * publish
+  # * clean
+  #
+  # @note This tool is useless unless your project is hosted on GitHub!
   class GitHub < Tool
+
+    # Works with the Standard assembly.
+    #
+    # @!parse
+    #   include Standard
+    #
+    assembly Standard
+
+    # Location of manpage for tool.
+    MANPAGE = File.dirname(__FILE__)+'/../man/detroit-github.5'
 
     #
     PAGES_BRANCH = "gh-pages"
@@ -21,14 +35,19 @@ module Detroit
     # The project directory to store the gh-pages git repo.
     DEFAULT_FOLDER = "web"
 
-    #
+    # Default remote name.
     DEFAULT_REMOTE = "origin"
 
     # Default commit message.
     DEFAULT_MESSAGE = "Update pages via Detroit."
 
-
-    #  A T T R I B U T E S
+    #
+    def prerequisite
+      @branch  = PAGES_BRANCH
+      @folder  = DEFAULT_FOLDER
+      @remote  = DEFAULT_REMOTE
+      @message = DEFAULT_MESSAGE
+    end
 
     # The remote to use (defaults to 'origin').
     attr_accessor :remote
@@ -76,29 +95,6 @@ module Detroit
     # The repository branch (ALWAYS "gh-pages").
     attr_reader :branch
 
-    #  A S S E M B L Y
-
-    # Do not need to `prepare` if gh_pages directory is already created.
-    def assemble?(station, options={})
-      case station
-      when :prepare
-        child ? false : true
-      when :publish, :clean
-        true
-      end
-    end
-
-    # Attach to `prepare`, `publish` and `clean`.
-    def assemble(station, options={})
-      case station
-      when :prepare then prepare
-      when :publish then publish
-      when :clean   then clean
-      end
-    end
-
-    #  S E R V I C E   M E T H O D S 
-
     #
     def prepare
       return if child
@@ -119,11 +115,16 @@ module Detroit
       update_gitignore
     end
 
-    #
+    # We do not need to prepare if gh_pages directory is already created.
+    def prepare?
+      !child
+    end
+
     # Publish sitemap files to branch (gh-pages).
     #
-    # @todo Should we all `git add --all` ?
+    # @todo Should we `git add --all` ?
     #
+    # @return [void]
     def publish
       if !File.directory?(pgdir)
         report "No pages folder found (#{folder})."
@@ -139,9 +140,29 @@ module Detroit
       end
     end
 
-    #
+    # Remove temporary directory.
     def clean
       rm_r File.join(Dir.tmpdir, 'detroit', 'github')
+    end
+
+    # @method :station_publish(opts = {})
+    station :prepare
+
+    # @method :station_publish(opts = {})
+    station :publish
+
+    # @method :station_clean(opts = {})
+    station :clean
+
+    # This tool ties into the `prepare`, `publish` and `clean` stations of the
+    # standard assembly.
+    #
+    # @return [Boolean]
+    def assemble?(station, options={})
+      return true if station == :prepare
+      return true if station == :publish
+      return true if station == :purge
+      return false
     end
 
   private
@@ -193,15 +214,7 @@ module Detroit
       end
     end
 
-    # TODO: Does the POM Project provide the site folder?
-
-    #
-    def initialize_defaults
-      @branch   ||= PAGES_BRANCH
-      @folder   ||= DEFAULT_FOLDER
-      @remote   ||= DEFAULT_REMOTE
-      @message  ||= DEFAULT_MESSAGE
-    end
+    # TODO: Does the Project provide the site folder?
 
     # TODO: Switch to `scm` gem if it is better than grit.
 
@@ -317,12 +330,6 @@ module Detroit
       paths
     end
 =end
-
-  public
-
-    def self.man_page
-      File.dirname(__FILE__)+'/../man/detroit-github.5'
-    end
 
   end
 
